@@ -125,7 +125,7 @@ function launchConfetti() {
     let startTime = null;
     function animate(timestamp) {
         if (!startTime) startTime = timestamp;
-        const elapsed = (timestamp - startTime) / 1500; // seconds
+        const elapsed = (timestamp - startTime) / 15000; // seconds
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawConfetti();
