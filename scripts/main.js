@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const sections = document.querySelectorAll("main section");
+    const sections = document.querySelectorAll(".animated-section");
     const revealSections = () => {
         const triggerBottom = window.innerHeight * 0.85;
         sections.forEach(section => {
@@ -144,6 +144,9 @@ function launchConfetti() {
 
 window.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('confetti-canvas')) {
-        launchConfetti();
+        if (!sessionStorage.getItem('celebrateShown')) {
+            launchConfetti();
+            sessionStorage.setItem('celebrateShown', 'yes');
+        }
     }
 });
