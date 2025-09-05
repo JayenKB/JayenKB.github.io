@@ -20,9 +20,9 @@ function launchConfetti() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    // Confetti setup
     const confettiCount = 120;
     const confetti = [];
-
     for (let i = 0; i < confettiCount; i++) {
         confetti.push({
             x: Math.random() * canvas.width,
@@ -36,8 +36,30 @@ function launchConfetti() {
         });
     }
 
+    // Firecracker setup
+    const firecrackers = [];
+    function spawnFirecracker() {
+        const x = Math.random() * canvas.width * 0.8 + canvas.width * 0.1;
+        const y = Math.random() * canvas.height * 0.5 + canvas.height * 0.1;
+        const particles = [];
+        const particleCount = 24;
+        for (let i = 0; i < particleCount; i++) {
+            const angle = (Math.PI * 2 * i) / particleCount;
+            const speed = Math.random() * 3 + 2;
+            particles.push({
+                x, y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                alpha: 1,
+                color: `hsl(${Math.random() * 360}, 90%, 60%)`
+            });
+        }
+        firecrackers.push({ particles });
+    }
+
+    setInterval(spawnFirecracker, 1200); // Firecracker every 1.2s
+
     function drawConfetti() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
         confetti.forEach(c => {
             ctx.beginPath();
             ctx.lineWidth = c.r;
@@ -46,7 +68,6 @@ function launchConfetti() {
             ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r);
             ctx.stroke();
         });
-        updateConfetti();
     }
 
     function updateConfetti() {
@@ -56,8 +77,6 @@ function launchConfetti() {
             c.x += Math.sin(0.01 * c.d);
             c.tiltAngle += c.tiltAngleIncremental;
             c.tilt = Math.sin(c.tiltAngle) * 15;
-
-            // Reset confetti when out of view
             if (c.y > canvas.height) {
                 c.x = Math.random() * canvas.width;
                 c.y = -10;
@@ -66,17 +85,61 @@ function launchConfetti() {
         }
     }
 
-    let frame = 0;
-    function animate() {
+    function drawFirecrackers() {
+        for (let i = firecrackers.length - 1; i >= 0; i--) {
+            const fc = firecrackers[i];
+            let allGone = true;
+            fc.particles.forEach(p => {
+                if (p.alpha > 0.05) {
+                    ctx.save();
+                    ctx.globalAlpha = p.alpha;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 3, 0, 2 * Math.PI);
+                    ctx.fillStyle = p.color;
+                    ctx.shadowColor = p.color;
+                    ctx.shadowBlur = 10;
+                    ctx.fill();
+                    ctx.restore();
+                    allGone = false;
+                }
+            });
+            if (allGone) {
+                firecrackers.splice(i, 1);
+            }
+        }
+    }
+
+    function updateFirecrackers() {
+        firecrackers.forEach(fc => {
+            fc.particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vx *= 0.96;
+                p.vy *= 0.96;
+                p.vy += 0.04; // gravity
+                p.alpha *= 0.96;
+            });
+        });
+    }
+
+    let startTime = null;
+    function animate(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const elapsed = (timestamp - startTime) / 1500; // seconds
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawConfetti();
-        frame++;
-        if (frame < 600) { // Confetti lasts for ~10 seconds
+        drawFirecrackers();
+        updateConfetti();
+        updateFirecrackers();
+
+        if (elapsed < 10) {
             requestAnimationFrame(animate);
         } else {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
     }
-    animate();
+    requestAnimationFrame(animate);
 }
 
 window.addEventListener('DOMContentLoaded', launchConfetti);
