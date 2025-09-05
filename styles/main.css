@@ -53,6 +53,43 @@ footer {
     animation: fadeInUp 1s ease 1.2s backwards;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
+nav {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: inline-flex;
+    gap: 30px;
+}
+
+.nav-links li {
+    display: inline;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #2c5364;
+    font-weight: bold;
+    font-size: 1.1rem;
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: background 0.3s, color 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links a:focus {
+    background: #6a11cb;
+    color: #fff;
+}
+
 /* Keyframes */
 @keyframes fadeInDown {
     from { opacity: 0; transform: translateY(-40px);}

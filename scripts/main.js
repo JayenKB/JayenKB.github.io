@@ -142,4 +142,8 @@ function launchConfetti() {
     requestAnimationFrame(animate);
 }
 
-window.addEventListener('DOMContentLoaded', launchConfetti);
+window.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('confetti-canvas')) {
+        launchConfetti();
+    }
+});
